@@ -27,7 +27,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     @Transactional
-    public CommentSaveResponse saveComment(AuthUser authUser, long todoId, CommentSaveRequest commentSaveRequest) {
+    public CommentSaveResponse saveComment(AuthUser authUser, Long todoId, CommentSaveRequest commentSaveRequest) {
         User user = User.fromAuthUser(authUser);
         Todo todo = todoRepository.findById(todoId).orElseThrow(() ->
                 new InvalidRequestException("Todo not found"));
@@ -47,7 +47,7 @@ public class CommentService {
         );
     }
 
-    public List<CommentResponse> getComments(long todoId) {
+    public List<CommentResponse> getComments(Long todoId) {
         List<Comment> commentList = commentRepository.findByTodoIdWithUser(todoId);
 
         List<CommentResponse> dtoList = new ArrayList<>();

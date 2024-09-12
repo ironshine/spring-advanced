@@ -1,5 +1,6 @@
 package org.example.expert.domain.auth.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.expert.domain.auth.dto.request.SigninRequest;
@@ -18,12 +19,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/auth/signup")
-    public SignupResponse signup(@Valid @RequestBody SignupRequest signupRequest) {
-        return authService.signup(signupRequest);
+    public SignupResponse signup(@Valid @RequestBody SignupRequest signupRequest, HttpServletResponse res) {
+        return authService.signup(signupRequest,res);
     }
 
     @PostMapping("/auth/signin")
-    public SigninResponse signin(@Valid @RequestBody SigninRequest signinRequest) {
-        return authService.signin(signinRequest);
+    public SigninResponse signin(@Valid @RequestBody SigninRequest signinRequest, HttpServletResponse res) {
+        return authService.signin(signinRequest, res);
     }
 }

@@ -1,5 +1,6 @@
 package org.example.expert.domain.auth.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.expert.config.JwtUtil;
@@ -26,7 +27,7 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public SignupResponse signup(SignupRequest signupRequest) {
+    public SignupResponse signup(SignupRequest signupRequest, HttpServletResponse res) {
 
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             throw new InvalidRequestException("이미 존재하는 이메일입니다.");
@@ -44,11 +45,12 @@ public class AuthService {
         User savedUser = userRepository.save(newUser);
 
         String bearerToken = jwtUtil.createToken(savedUser.getId(), savedUser.getEmail(), userRole);
+        jwtUtil.addJwtToCookie(bearerToken, res);
 
-        return new SignupResponse(bearerToken);
+        return new SignupResponse(bearerToken, savedUser.getId());
     }
 
-    public SigninResponse signin(SigninRequest signinRequest) {
+    public SigninResponse signin(SigninRequest signinRequest, HttpServletResponse res) {
         User user = userRepository.findByEmail(signinRequest.getEmail()).orElseThrow(
                 () -> new InvalidRequestException("가입되지 않은 유저입니다."));
 
@@ -58,6 +60,7 @@ public class AuthService {
         }
 
         String bearerToken = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
+        jwtUtil.addJwtToCookie(bearerToken, res);
 
         return new SigninResponse(bearerToken);
     }

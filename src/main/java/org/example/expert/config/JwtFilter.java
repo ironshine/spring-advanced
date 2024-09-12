@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtFilter implements Filter {
+public class JwtFilter implements Filter { // 디버그 찍어보고, 오류 확인해보기
 
     private final JwtUtil jwtUtil;
 
@@ -37,7 +37,7 @@ public class JwtFilter implements Filter {
             return;
         }
 
-        String bearerJwt = httpRequest.getHeader("Authorization");
+        String bearerJwt = jwtUtil.getTokenFromRequest(httpRequest);
 
         if (bearerJwt == null) {
             // 토큰이 없는 경우 400을 반환합니다.
@@ -46,11 +46,13 @@ public class JwtFilter implements Filter {
         }
 
         String jwt = jwtUtil.substringToken(bearerJwt);
+//        String jwt = ((HttpServletRequest) request).getHeader("Authorization");
 
         try {
             // JWT 유효성 검사와 claims 추출
             Claims claims = jwtUtil.extractClaims(jwt);
             if (claims == null) {
+                log.info("3");
                 httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, "잘못된 JWT 토큰입니다.");
                 return;
             }
@@ -68,9 +70,10 @@ public class JwtFilter implements Filter {
                     return;
                 }
                 chain.doFilter(request, response);
+                log.info("2");
                 return;
             }
-
+            log.info("1");
             chain.doFilter(request, response);
         } catch (SecurityException | MalformedJwtException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", e);

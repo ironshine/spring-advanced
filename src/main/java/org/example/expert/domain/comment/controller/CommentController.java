@@ -22,14 +22,14 @@ public class CommentController {
     @PostMapping("/todos/{todoId}/comments")
     public ResponseEntity<CommentSaveResponse> saveComment(
             @Auth AuthUser authUser,
-            @PathVariable long todoId,
+            @PathVariable Long todoId,
             @Valid @RequestBody CommentSaveRequest commentSaveRequest
     ) {
         return ResponseEntity.ok(commentService.saveComment(authUser, todoId, commentSaveRequest));
     }
-
+// 그레이들로 하는 방식,
     @GetMapping("/todos/{todoId}/comments")
-    public ResponseEntity<List<CommentResponse>> getComments(@PathVariable long todoId) {
+    public ResponseEntity<List<CommentResponse>> getComments(@PathVariable Long todoId) {
         return ResponseEntity.ok(commentService.getComments(todoId));
     }
 }
